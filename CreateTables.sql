@@ -6,22 +6,28 @@ CREATE TABLE Song (
     artist VARCHAR(255) NOT NULL,
     album VARCHAR(255),
     genre VARCHAR(100),
-    year INT,
-    tracknumber INT NULL,
-    duration INT,
+    release_year INT,
+    tracknumber INT
+);
+
+CREATE TABLE SongFile (
+    fileid INT AUTO_INCREMENT PRIMARY KEY,
+    songid INT NOT NULL,
+    duration INT NOT NULL, --seconds
     channels INT,
     codec VARCHAR(50),
     filepath VARCHAR(500) NOT NULL,
-    filehash VARCHAR(64) NOT NULL UNIQUE
+    filehash VARCHAR(64) NOT NULL UNIQUE,
+    FOREIGN KEY (songid) REFERENCES Song(songid) ON DELETE CASCADE
 );
 
 CREATE TABLE Tags (
     tagid INT AUTO_INCREMENT PRIMARY KEY,
-    tagname VARCHAR(100) NOT NULL UNIQUE
+    tagname VARCHAR(100) NOT NULL UNIQUE,
 );
 
-CREATE TABLE TagEntry (
-    tagentryid INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE SongTag (
+    songtagid INT AUTO_INCREMENT PRIMARY KEY,
     songid INT NOT NULL,
     tagid INT NOT NULL,
     UNIQUE (songid, tagid),
@@ -29,3 +35,16 @@ CREATE TABLE TagEntry (
     FOREIGN KEY (tagid) REFERENCES Tags(tagid) ON DELETE CASCADE
 );
 
+CREATE TABLE PlayHistory (
+    playid INT AUTO_INCREMENT PRIMARY KEY,
+    songid INT NOT NULL,
+    played_at DATETIME NOT NULL,
+    FOREIGN KEY (songid) REFERENCES Song(songid)
+);
+
+CREATE TABLE SongRating (
+    songid INT PRIMARY KEY,
+    likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
+    FOREIGN KEY (songid) REFERENCES Song(songid)
+);
